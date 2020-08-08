@@ -1,35 +1,45 @@
 import React from 'react'
-import faker from 'faker'
+import SeasonDisplay from './SeasonDisplay'
+import Spinner from './Spinner'
 
-import CommentDetail from './components/CommentDetail'
-import ApprovalCard from './components/ApprovalCard'
+class App extends React.Component {
+    state = {
+        lat: null,
+        errorMessage: ''
+    }
 
-const App = () => {
-    return (
-        <div className="ui container comments">
-            <ApprovalCard>
-                <div>
-                    <h4>Warning!</h4>
-                    Are you sure you want to do this?
-                </div>
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author="Sam" timeA go="Today at 4:45PM" avzatar={faker.image.avatar()} content="Nice blog post!" />
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author="Alex" timeAgo="Today at 2:35PM" avatar={faker.image.avatar()} content="Keep up the good work" />
-            </ApprovalCard>
-            <ApprovalCard>
-                <CommentDetail author="Jane" timeAgo="Today at 1:00PM" avatar={faker.image.avatar()} content="You can do it!" />  
-            </ApprovalCard>   
-            <ApprovalCard>
-                <CommentDetail author="Jessa" timeAgo="Today at 10:05M" avatar={faker.image.avatar()} content="Believe in yourself" />  
-            </ApprovalCard>   
-            <ApprovalCard>
-                <CommentDetail author="Dhinalyn" timeAgo="Today at 8:35AM" avatar={faker.image.avatar()} content="Go for it!" /> 
-            </ApprovalCard>    
-        </div>
-    )
+    componentDidMount() {
+        console.log('My component was rendered')
+        window.navigator.geolocation.getCurrentPosition(position => {
+            console.log(position)
+            this.setState({ 
+                lat: position.coords.latitude,
+                errorMessage: null,
+                loading: false
+            })
+        }, err => {
+            this.setState({
+                errorMessage: err.message,
+                loading: false,
+                lat: null
+            })
+        })
+    }
+
+    componentDidUpdate() {
+        console.log('My component was just updated - it rerendered')
+    }
+
+    // React says we have to define render in class based component
+    render() {
+        if (this.state.errorMessage && !this.state.lat) {
+            return <div>Error: {this.state.errorMessage}</div>
+        }
+        if (!this.state.errorMessage && this.state.lat) {
+            return <div><SeasonDisplay lat={this.state.lat} /></div>
+        }
+        return <div><Spinner /></div>
+    }
 }
 
 export default App
