@@ -3,25 +3,22 @@ import SeasonDisplay from './SeasonDisplay'
 import Spinner from './Spinner'
 
 const App = () => {
-    const [state, setState] = useState({
+    const [latState, latSetState] = useState({
         lat: null,
         errorMessage: ''
     })
-    const { lat, errorMessage } = state 
+    const { lat, errorMessage } = latState 
 
     useEffect(() => {
-        console.log('My component was rendered')
         window.navigator.geolocation.getCurrentPosition(position => {
             console.log(position)
-            setState({ 
+            latSetState({ 
                 lat: position.coords.latitude,
                 errorMessage: null,
-                loading: false
             })
         }, err => {
-            setState({
+            latSetState({
                 errorMessage: err.message,
-                loading: false,
                 lat: null
             })
         })
